@@ -1,24 +1,24 @@
 const express=require('express');
 const chats=require('./data/data.js')
 const dotenv=require('dotenv');
+const colors=require('colors');
+const userRoutes=require("./routes/userRoutes.js")
+const connectDB = require('./config/db.js');
+const {notFound,errorHandler}=require("./middleware/errorMiddleware.js")
 const app=express();
 dotenv.config();
 
+connectDB();
 
+app.use(express.json());
 app.get("/",(req,res)=>{
     res.send("API is running");
 })
-app.get('/api/chat',(req,res)=>{
-    res.send(chats);
-})
+app.use('/api/user',userRoutes);
 
-app.get('/api/chat/:id',(req,res)=>{
-   // console.log(req.params.id);
-   const singleChat=chats.find(c=>c._id===req.params.id);
-    res.send(singleChat);
-   
-})
+app.use(notFound);
+app.use(errorHandler);
 const PORT=process.env.PORT||6060;
 app.listen(PORT,()=>{
-    console.log(`Server started at ${PORT}`);
+    console.log(`Server started at ${PORT}`.yellow.bold);
 })

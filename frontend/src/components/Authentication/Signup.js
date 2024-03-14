@@ -1,5 +1,8 @@
 import React,{useState} from 'react'
+import axios from 'axios'
+import { useToast } from '@chakra-ui/react'
 import { FormControl, FormLabel, Input, InputGroup, VStack,InputRightElement,Button } from '@chakra-ui/react'
+import {useNavigate} from 'react-router-dom';
 
 const Signup = () => {
     const [show,setShow]=useState(false);
@@ -7,19 +10,57 @@ const Signup = () => {
     const [email,setEmail]=useState();
     const [confirmpassword,setConfirmpassword]=useState();
     const [password,setPassword]=useState();
-    const [pic,setPic]=useState();
+   // const [loading,setLoading]=useState(false);
+    const toast=useToast();
+    const navigate=useNavigate();
 
     const handleClick=()=>{
            setShow(!show);
     }
-    const postDetails=(pics)=>{
-
-    }
-    const submitHandler=()=>{
-        
-    }
+    const submitHandler=async()=>{
+         //setLoading(true);
+         if(!name || !email || !password ||!confirmpassword){
+            toast({
+                title:"Please fill all the Fields",
+                status:"warning",
+                duration:5000,
+                isClosable:true,
+                position:"bottom",
+            })
+            //setLoading(false);
+            return;
+         }
+         try{
+           const config={
+            headers:{
+                "Content-type":"application/json",
+            },
+           };
+           const {data}=await axios.post("/api/user",{name,email,password},config);
+           toast({
+            title: "Registration Successful",
+            status:"Success",
+            duration:5000,
+            isClosable:true,
+            position:"bottom",
+           });
+           localStorage.setItem("userInfo",JSON.stringify(data));
+           //setLoading(false);
+           navigate('/chats')
+         }catch(error){
+            toast({
+                title: "Error occured",
+                description:error.response.data.message,
+                status:"error",
+                duration:5000,
+                isClosable:true,
+                position:"bottom",
+               });
+         }
+    };
   return (
     <VStack spacing='5px' color='black'>
+
         <FormControl id='first-name' isRequired>
             <FormLabel>Name</FormLabel>
             <Input placeholder='Enter your Name'
@@ -30,7 +71,7 @@ const Signup = () => {
         <FormControl id='email' isRequired>
             <FormLabel>Email</FormLabel>
             <Input placeholder='Enter your Email'
-             onChange={(e)=>setName(e.target.value)}
+             onChange={(e)=>setEmail(e.target.value)}
             />
            
         </FormControl>
@@ -72,12 +113,12 @@ const Signup = () => {
             
             
         </FormControl>
-        <FormControl id='pic' isRequired>
+        {/* <FormControl id='pic' isRequired>
             <FormLabel>Upload your picture</FormLabel>   
             <Input type="file" p={1.5} accept='image/*' onChange={(e)=>postDetails(e.target.files[0])}
              />
                  
-        </FormControl>
+        </FormControl> */}
   
          
          <Button colorScheme='blue' width="100%" style={{marginTop:15}} 
