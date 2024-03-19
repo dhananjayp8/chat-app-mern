@@ -4,6 +4,8 @@ import axios from 'axios';
 import { ChatState } from '../context/ChatProvider';
 import { Box } from '@chakra-ui/react';
 import SideDrawer from '../components/miscallaneous/SideDrawer';
+import MyChats from '../components/MyChats';
+import ChatBox from '../components/ChatBox';
 const ChatPage = () => {
 const {user}=ChatState();
 
@@ -12,9 +14,15 @@ const {user}=ChatState();
       {
        user && <SideDrawer/> 
       }
-      <Box>
-        {/* {user && <MyChats/>} */}
-        {/* {user && <ChatBox/>} */}
+      <Box
+      display={"flex"}
+      justifyContent={"space-between"}
+      w={"100%"}
+      h={"91.5vh"}
+      p={"10px"}
+      >
+         {user && <MyChats/>} 
+        {user && <ChatBox/>} 
       </Box>
     </div>
   )
